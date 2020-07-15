@@ -134,6 +134,7 @@
 
 <script>
 import { getHomeMultidata, getHomeGoods } from "network/home";
+import {debounce} from "@/utils"
 
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/common/scroll/Scroll";
@@ -171,7 +172,8 @@ export default {
       currentType: "pop",
       isTabFixed: false,
       tabOffsetTop: 0,
-      showBackTop: false
+      showBackTop: false,
+      saveY: 0
     };
   },
   created() {
@@ -185,11 +187,21 @@ export default {
   },
   mounted() {
     
-    const refresh = this.debounds(this.$refs.scroll.refresh,20)
+    const refresh = debounce(this.$refs.scroll.refresh,20)
     // console.log(refresh)
     this.$bus.$on('imageLoad', () => {
       refresh()
     })
+  },
+  destroyed() {
+    console.log('destroyed')
+  },
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.saveY);
+    this.$refs.scroll.refresh()
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.getScrollY()
   },
   computed: {
     showGoods() {
@@ -197,18 +209,6 @@ export default {
     }
   },
   methods: {
-    debounds(func, delay=20) {
-      
-      let timer = null
-      return function(...args) {
-        if (timer) clearTimeout(timer)
-        // console.log(timer)
-        timer = setTimeout(() => {
-          // console.log('123')
-          func.apply(this,args)
-        }, delay);
-      }
-    },
     // 事件监听相关方法
     tabClick(index) {
       switch (index) {
@@ -252,11 +252,13 @@ export default {
       });
     },
     getHomeGoods(type) {
+      console.log('getHomeGoods')
       const page = this.goods[type].page + 1;
       getHomeGoods(type, page).then(res => {
         // console.log(res)
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+        this.$refs.scroll.finishPullUp()
       });
     }
   }
