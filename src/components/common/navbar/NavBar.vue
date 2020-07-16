@@ -39,4 +39,13 @@ methods: {
         flex: 1;
         /* background-color: green; */
     }
+    .left {
+        position: relative;
+    }
+    .left img {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 25%;
+    }
 </style>

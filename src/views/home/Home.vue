@@ -252,7 +252,7 @@ export default {
       });
     },
     getHomeGoods(type) {
-      console.log('getHomeGoods')
+      // console.log('getHomeGoods')
       const page = this.goods[type].page + 1;
       getHomeGoods(type, page).then(res => {
         // console.log(res)

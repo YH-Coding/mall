@@ -1,6 +1,7 @@
 <template>
   <div>
       <nav-bar>
+          <img slot="left" @click="backClick" src="@/assets/img/common/back.svg" alt="">
           <div slot="center" class="content">
               <div 
               v-for="(item,index) in titles" 
@@ -30,6 +31,9 @@ export default {
   methods: {
       itemClick(index) {
           this.currentIndex = index
+      },
+      backClick() {
+          this.$router.back()
       }
   }
 };
