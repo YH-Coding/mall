@@ -1,6 +1,6 @@
 <template>
-<div class="back-top">
-    <img src="~assets/img/common/top.png" alt="">
+<div class="back-top" @click="topClick">
+    <slot></slot>
 </div>
 </template>
 
@@ -14,7 +14,9 @@ return {
 };
 },
 methods: {
-
+    topClick() {
+        this.$emit('backTop')
+    }
 },
 }
 </script>

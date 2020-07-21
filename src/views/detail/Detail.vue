@@ -1,14 +1,21 @@
 <template>
   <div class="detail">
-    <detail-nav-bar class="nav-bar"></detail-nav-bar>
-    <scroll class="content" ref="scroll">
-      <detail-swiper :topImages="topImages"></detail-swiper>
+    <detail-nav-bar @itemClick="titleClick" :current-index="currentIndex" class="nav-bar"></detail-nav-bar>
+    <scroll class="content" 
+            ref="scroll"
+            @scroll="contentScroll"
+            :probe-type="3">
+      <detail-swiper ref="base" :topImages="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <detail-shop-info :shop="shop"></detail-shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info>
-      <detail-param-info :param-info="paramInfo"></detail-param-info>
-      <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
+      <detail-param-info ref="param" :param-info="paramInfo"></detail-param-info>
+      <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
+      <detail-recommend-info ref="recommend" :recommend-list="recommendList"></detail-recommend-info>
     </scroll>
+    <back-top @backTop="backTop" class="back-top" v-show="showBackTop">
+      <img src="~assets/img/common/top.png" alt="">
+    </back-top>
     <!-- 详情页{{iid}} -->
   </div>
 </template>
@@ -25,8 +32,15 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from './childComps/DetailParamInfo'
 import DetailCommentInfo from './childComps/DetailCommentInfo'
+import DetailRecommendInfo from './childComps/DetailRecommendInfo'
+
+import BackTop from '@/components/content/backTop/BackTop'
+
+import {backTopMixin} from '@/common/mixin'
+import {BACKTOP_DISTANCE} from '@/common/const'
 
 export default {
+  inject: ['reload'],
   name: "Detail",
   components: {
     DetailNavBar,
@@ -37,8 +51,11 @@ export default {
     DetailShopInfo,
     DetailGoodsInfo,
     DetailParamInfo,
-    DetailCommentInfo
+    DetailCommentInfo,
+    DetailRecommendInfo,
+    BackTop
   },
+  mixins: [backTopMixin],
   data() {
     return {
       iid: "",
@@ -48,17 +65,57 @@ export default {
       detailInfo: {},
       paramInfo: {},
       commentInfo: {},
-      recommendList: []
+      recommendList: [],
+      currentIndex: 0,
+      themeTops: []
     };
   },
   created() {
     this._getDetailData()
     this._getRecommend()
   },
+  updated() {
+    this._getOffsetTops()
+  },
+  mounted() {
+    this.$bus.$on('goodsClick',() => {
+      this.reload()
+    })
+  },
   methods: {
     /** -----------=================== 业务逻辑 =================----------- */
+    _getOffsetTops() {
+      this.themeTops = []
+      this.themeTops.push(this.$refs.base.$el.offsetTop)
+      this.themeTops.push(this.$refs.param.$el.offsetTop)
+      this.themeTops.push(this.$refs.comment.$el.offsetTop)
+      this.themeTops.push(this.$refs.recommend.$el.offsetTop)
+      this.themeTops.push(Number.MAX_VALUE)
+    },
     imageLoad() {
       this.$refs.scroll.refresh();
+    },
+    contentScroll(position) {
+      // 1.监听backTop的显示
+      this.showBackTop = position.y < -BACKTOP_DISTANCE
+
+      // 2.监听滚动到那个主题
+      this._listenScrollTheme(-position.y)
+    },
+    _listenScrollTheme(position) {
+      let length = this.themeTops.length
+      for (let i = 0; i < length; i++) {
+        let iPos = this.themeTops[i]
+        if (position >= iPos && position < this.themeTops[i+1]) {
+          if (this.currentIndex !== i) {
+            this.currentIndex = i
+          }
+          break
+        }
+      }
+    },
+    titleClick(index) {
+      this.$refs.scroll.scrollTo(0, -this.themeTops[index], 100)
     },
     /** -----------=================== 网络请求 =================----------- */
     _getDetailData() {
@@ -112,5 +169,11 @@ export default {
   /* position: absolute;
     top: 44px;
     bottom: 60px; */
+}
+
+.back-top {
+  position: fixed;
+  right: 10px;
+  bottom: 65px;
 }
 </style>

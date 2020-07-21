@@ -26,7 +26,9 @@
       <tab-control @tabClick="tabClick" :titles="['流行', '新款', '精选']" ref="tabControl2"></tab-control>
       <goods-list :goods-list="showGoods"></goods-list>
     </scroll>
-    <back-top @click.native="backTop" class="back-top" v-show="showBackTop"></back-top>
+    <back-top @backTop="backTop" class="back-top" v-show="showBackTop">
+      <img src="~assets/img/common/top.png" alt="">
+    </back-top>
     <ul>
       <li></li>
       <li></li>
@@ -147,6 +149,9 @@ import HomeSwiper from "./childComps/HomeSwiper";
 import HomeRecommend from "./childComps/HomeRecommend";
 import FeatureView from "./childComps/FeatureView";
 
+import {backTopMixin} from '@/common/mixin'
+import {BACKTOP_DISTANCE} from '@/common/const'
+
 export default {
   name: "Home",
   components: {
@@ -160,6 +165,7 @@ export default {
     HomeRecommend,
     FeatureView
   },
+  mixins: [backTopMixin],
   data() {
     return {
       banners: [],
@@ -172,7 +178,6 @@ export default {
       currentType: "pop",
       isTabFixed: false,
       tabOffsetTop: 0,
-      showBackTop: false,
       saveY: 0
     };
   },
@@ -229,13 +234,10 @@ export default {
       this.isTabFixed = position.y < -this.tabOffsetTop;
 
       // 2.决定backTop是否显示
-      this.showBackTop = position.y < -1000;
+      this.showBackTop = position.y < -BACKTOP_DISTANCE;
     },
     loadMore() {
       this.getHomeGoods(this.currentType);
-    },
-    backTop() {
-      this.$refs.scroll.scrollTo(0, 0);
     },
     // 网络请求相关方法
     getHomeMultidata() {
