@@ -8,33 +8,39 @@
 </template>
 
 <script>
-import MainTabBar from 'components/content/mainTabBar/MainTabBar'
+import MainTabBar from "components/content/mainTabBar/MainTabBar";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    MainTabBar
+    MainTabBar,
   },
   provide() {
     return {
-      reload: this.reload
-    }
+      reload: this.reload,
+    };
   },
   data() {
     return {
-      isRouterAlive: true
-    }
+      isRouterAlive: true,
+    };
   },
   methods: {
     reload() {
-      this.isRouterAlive = false
+      this.isRouterAlive = false;
       this.$nextTick(() => {
-        this.isRouterAlive = true
-      })
-    }
-  }
-}
+        this.isRouterAlive = true;
+      });
+    },
+  },
+};
 </script>
 
-<style>
-  @import 'assets/css/base.css'
+
+<style scoped>
+@import "assets/css/base.css";
+
+#app {
+  height: 100vh;
+  overflow: hidden;
+}
 </style>

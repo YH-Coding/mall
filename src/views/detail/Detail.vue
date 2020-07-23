@@ -13,6 +13,7 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
       <detail-recommend-info ref="recommend" :recommend-list="recommendList"></detail-recommend-info>
     </scroll>
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
     <back-top @backTop="backTop" class="back-top" v-show="showBackTop">
       <img src="~assets/img/common/top.png" alt="">
     </back-top>
@@ -33,6 +34,7 @@ import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from './childComps/DetailParamInfo'
 import DetailCommentInfo from './childComps/DetailCommentInfo'
 import DetailRecommendInfo from './childComps/DetailRecommendInfo'
+import DetailBottomBar from './childComps/DetailBottomBar'
 
 import BackTop from '@/components/content/backTop/BackTop'
 
@@ -46,6 +48,7 @@ export default {
     DetailNavBar,
     DetailSwiper,
     Scroll,
+    BackTop,
 
     DetailBaseInfo,
     DetailShopInfo,
@@ -53,7 +56,8 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     DetailRecommendInfo,
-    BackTop
+    DetailBottomBar
+    
   },
   mixins: [backTopMixin],
   data() {
@@ -117,6 +121,20 @@ export default {
     titleClick(index) {
       this.$refs.scroll.scrollTo(0, -this.themeTops[index], 100)
     },
+    addToCart() {
+      // 1.创建对象
+      const obj = {}
+
+      // 2.对象信息
+      obj.iid = this.iid
+      obj.imgUrl = this.topImages[0]
+      obj.title = this.goods.title
+      obj.desc = this.goods.desc
+      obj.newPrice = this.goods.nowPrice
+
+      // 3.添加到store中
+      this.$store.dispatch('addCart', obj)
+    },
     /** -----------=================== 网络请求 =================----------- */
     _getDetailData() {
       this.iid = this.$route.params.iid;
@@ -165,7 +183,8 @@ export default {
   height: 100vh;
 }
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 102px);
+  overflow: hidden;
   /* position: absolute;
     top: 44px;
     bottom: 60px; */

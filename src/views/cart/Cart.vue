@@ -1,13 +1,25 @@
 <template>
 <div>
-    <h1>购物车</h1>
+    <cart-nav-bar/>
+    <cart-list :cart-list="cartList"/>
+    <bottom-bar/>
 </div>
 </template>
 
 <script>
+import CartNavBar from './childComps/CartNavBar'
+import CartList from './childComps/CartList'
+import BottomBar from './childComps/BottomBar'
+
+import { mapGetters } from 'vuex'
+
 export default {
 name: 'Cart',
-components: {},
+components: {
+    CartNavBar,
+    CartList,
+    BottomBar
+},
 data() {
 return {
 
@@ -16,8 +28,17 @@ return {
 methods: {
 
 },
+computed: {
+    ...mapGetters(['cartList'])
+}
 }
 </script>
 
 <style scoped>
+.cart-list {
+    position: absolute;
+    top: 44px;
+    bottom: 93px;
+    width: 100%;
+}
 </style>
