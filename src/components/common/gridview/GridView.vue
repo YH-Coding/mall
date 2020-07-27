@@ -5,6 +5,9 @@
 </template>
 
 <script>
+
+const VW = (100/320)
+
 	export default {
 		name: "GridView",
     props: {
@@ -44,18 +47,18 @@
         let children = gridEl.children;
 
         // 2.设置gridEl的内边距
-        gridEl.style.padding = `${this.vMargin}px ${this.hMargin}px`
+        gridEl.style.padding = `${this.vMargin * VW}vw ${this.hMargin * VW}vw`
 
         // 3.计算item的宽度
         let itemWidth = (gridEl.clientWidth - 2 * this.hMargin - (this.cols - 1) * this.itemSpace) / this.cols;
         for (let i = 0; i < children.length; i++) {
           let item = children[i];
-          item.style.width = itemWidth + 'px';
+          item.style.width = itemWidth * VW + 'vw';
           if ((i+1) % this.cols !== 0) {
-            item.style.marginRight = this.itemSpace + 'px'
+            item.style.marginRight = this.itemSpace * VW + 'vw'
           }
           if (i >= this.cols) {
-            item.style.marginTop = this.lineSpace + 'px'
+            item.style.marginTop = this.lineSpace * VW + 'vw'
           }
         }
       }
