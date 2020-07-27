@@ -40,6 +40,7 @@ import BackTop from '@/components/content/backTop/BackTop'
 
 import {backTopMixin} from '@/common/mixin'
 import {BACKTOP_DISTANCE} from '@/common/const'
+import { mapActions } from 'vuex'
 
 export default {
   inject: ['reload'],
@@ -71,7 +72,7 @@ export default {
       commentInfo: {},
       recommendList: [],
       currentIndex: 0,
-      themeTops: []
+      themeTops: [],
     };
   },
   created() {
@@ -87,6 +88,7 @@ export default {
     })
   },
   methods: {
+    ...mapActions(['addCart']),
     /** -----------=================== 业务逻辑 =================----------- */
     _getOffsetTops() {
       this.themeTops = []
@@ -133,7 +135,11 @@ export default {
       obj.newPrice = this.goods.nowPrice
 
       // 3.添加到store中
-      this.$store.dispatch('addCart', obj)
+      // this.$store.dispatch('addCart', obj)
+      this.addCart(obj).then(res => {
+        console.log(this.$toast);
+        this.$toast.show(res)
+      })
     },
     /** -----------=================== 网络请求 =================----------- */
     _getDetailData() {

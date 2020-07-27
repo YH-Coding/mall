@@ -1,8 +1,13 @@
+import {
+  ADD_COUNTER,
+  ADD_TO_CART,
+} from './mutations-type'
+
 const mutations = {
-  addCounter(state, payload) {
+  [ADD_COUNTER](state, payload) {
     payload.count++
   },
-  addToCart(state, payload) {
+  [ADD_TO_CART](state, payload) {
     payload.count = 1
     payload.checked = true
     state.cartList.push(payload)

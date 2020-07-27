@@ -3,7 +3,7 @@
     <check-button class="select-all" @checkButtonClick="checkButtonClick" :checked="isSelectAll" />
     <span>全选</span>
     <span class="total-price">合计: ¥{{totalPrice}}</span>
-    <span class="buy-product">去计算({{selectCount}})</span>
+    <span class="buy-product" @click="calculate">去计算({{selectCount}})</span>
   </div>
 </template>
 
@@ -26,7 +26,8 @@ export default {
       return this.cartList.length > 0 && this.cartList.find(item => !item.checked) === undefined
     },
     selectCount() {
-      return this.cartList.filter(item => item.checked).length
+      return this.cartList.filter(item => item.checked).reduce((preValue, item) => preValue + item.count
+      , 0)
     }
   },
   methods: {
@@ -39,6 +40,11 @@ export default {
         this.cartList.forEach(item => item.checked = true)
       } else {
         this.cartList.forEach(item => item.checked = false)
+      }
+    },
+    calculate() {
+      if (this.selectCount === 0) {
+        this.$toast.show('你还未选择商品!请先选择商品再结算!')
       }
     }
   }
